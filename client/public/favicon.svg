@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c5f4f;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a3d2e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="carGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 배경 원 (약간의 그림자 효과) -->
+  <circle cx="32" cy="32" r="30" fill="url(#bgGrad)"/>
+  <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+  
+  <!-- 캠핑카 본체 -->
+  <rect x="14" y="38" width="36" height="10" rx="2" fill="url(#carGrad)"/>
+  
+  <!-- 캠핑카 지붕 (더 세련된 형태) -->
+  <path d="M 18 38 L 32 24 L 46 38 Z" fill="#ffffff" opacity="0.95"/>
+  <path d="M 20 38 L 32 26 L 44 38 Z" fill="rgba(44,95,79,0.1)"/>
+  
+  <!-- 캠핑카 창문 (더 현대적인 디자인) -->
+  <rect x="20" y="40" width="7" height="7" fill="#2c5f4f" rx="1" opacity="0.8"/>
+  <rect x="37" y="40" width="7" height="7" fill="#2c5f4f" rx="1" opacity="0.8"/>
+  
+  <!-- 공구 아이콘 (렌치/스패너) -->
+  <g transform="translate(32, 35)">
+    <circle r="4" fill="#2c5f4f" opacity="0.9"/>
+    <path d="M -2 -3 L 2 -3 L 3 0 L 2 3 L -2 3 L -3 0 Z" fill="#ffffff" transform="rotate(45)"/>
+  </g>
+  
+  <!-- 바퀴 -->
+  <circle cx="22" cy="48" r="3" fill="#1a3d2e"/>
+  <circle cx="42" cy="48" r="3" fill="#1a3d2e"/>
+</svg>
+
