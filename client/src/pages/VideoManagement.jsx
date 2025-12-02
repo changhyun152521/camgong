@@ -224,7 +224,7 @@ const VideoManagement = () => {
                         링크 보기
                       </a>
                     </td>
-                    <td>{new Date(video.createdAt).toLocaleDateString('ko-KR')}</td>
+                    <td>{new Date(video.publishedAt || video.createdAt).toLocaleDateString('ko-KR')}</td>
                   </tr>
                 ))
               )}
