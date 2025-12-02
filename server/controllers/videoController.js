@@ -148,12 +148,31 @@ export const getAllVideos = async (req, res) => {
     try {
       // 타임아웃 설정 (30초)
       // publishedAt을 우선 사용하여 정렬 (없으면 createdAt 사용)
-      const queryPromise = Video.find()
-        .sort({ publishedAt: -1, createdAt: -1 })
-        .select('-__v')
-        .skip(skip)
-        .limit(limit)
-        .lean();
+      // MongoDB aggregation을 사용하여 조건부 정렬
+      const queryPromise = Video.aggregate([
+        {
+          $addFields: {
+            sortDate: {
+              $ifNull: ['$publishedAt', '$createdAt']
+            }
+          }
+        },
+        {
+          $sort: { sortDate: -1 }
+        },
+        {
+          $skip: skip
+        },
+        {
+          $limit: limit
+        },
+        {
+          $project: {
+            __v: 0,
+            sortDate: 0
+          }
+        }
+      ]);
       
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('데이터베이스 쿼리 타임아웃 (30초)')), 30000);
