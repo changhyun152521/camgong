@@ -1,0 +1,23 @@
+{
+  "name": "camping-workshop",
+  "version": "1.0.0",
+  "description": "Camping Workshop - Server",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "cd server && node index.js",
+    "dev": "cd server && nodemon index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "nodejs",
+    "camping"
+  ],
+  "author": "",
+  "license": "ISC"
+}
+
