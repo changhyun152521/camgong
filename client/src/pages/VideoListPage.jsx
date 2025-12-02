@@ -30,7 +30,13 @@ const VideoListPage = () => {
         // 타입에 맞는 동영상만 필터링 (videoFormat === '동영상')
         const filteredVideos = allVideos.filter(video => 
           video.videoType === decodedType && video.videoFormat === '동영상'
-        );
+        )
+        // publishedAt 기준으로 최신순 정렬 (없으면 createdAt 사용)
+        .sort((a, b) => {
+          const dateA = new Date(a.publishedAt || a.createdAt);
+          const dateB = new Date(b.publishedAt || b.createdAt);
+          return dateB - dateA; // 최신순 (내림차순)
+        });
         
         // 페이지네이션
         const startIndex = (currentPage - 1) * videosPerPage;

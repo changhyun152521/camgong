@@ -147,8 +147,9 @@ export const getAllVideos = async (req, res) => {
     
     try {
       // 타임아웃 설정 (30초)
+      // publishedAt을 우선 사용하여 정렬 (없으면 createdAt 사용)
       const queryPromise = Video.find()
-        .sort({ createdAt: -1 })
+        .sort({ publishedAt: -1, createdAt: -1 })
         .select('-__v')
         .skip(skip)
         .limit(limit)

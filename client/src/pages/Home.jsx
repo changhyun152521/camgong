@@ -116,9 +116,14 @@ function Home() {
         // 페이지네이션 없이 모든 영상 가져오기 (메인 페이지용)
         const response = await api.get('/videos?limit=1000');
         if (response.data.success) {
-          // 동영상만 필터링 (쇼츠는 제외)하고 최대 4개까지만 표시
+          // 동영상만 필터링 (쇼츠는 제외)하고 최신순 정렬 후 최대 4개까지만 표시
           const filteredVideos = response.data.data
             .filter(video => video.videoFormat === '동영상')
+            .sort((a, b) => {
+              const dateA = new Date(a.publishedAt || a.createdAt);
+              const dateB = new Date(b.publishedAt || b.createdAt);
+              return dateB - dateA; // 최신순 (내림차순)
+            })
             .slice(0, 4);
           setVideos(filteredVideos);
         }

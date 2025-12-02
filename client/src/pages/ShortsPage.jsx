@@ -37,7 +37,13 @@ const ShortsPage = () => {
         // 타입에 맞는 쇼츠만 필터링 (videoFormat === '쇼츠')
         const filteredShorts = allVideos.filter(video => 
           video.videoType === decodedType && video.videoFormat === '쇼츠'
-        );
+        )
+        // publishedAt 기준으로 최신순 정렬 (없으면 createdAt 사용)
+        .sort((a, b) => {
+          const dateA = new Date(a.publishedAt || a.createdAt);
+          const dateB = new Date(b.publishedAt || b.createdAt);
+          return dateB - dateA; // 최신순 (내림차순)
+        });
         
         setShorts(filteredShorts);
         setCurrentIndex(0);
