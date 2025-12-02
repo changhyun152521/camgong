@@ -8,6 +8,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://camgong-f9de46ff4e13.herokuapp.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
