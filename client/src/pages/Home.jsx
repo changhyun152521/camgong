@@ -3,6 +3,7 @@ import '../App.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import VideoPlayer from '../components/VideoPlayer';
+import MobileConsultButton from '../components/MobileConsultButton';
 import api from '../utils/api';
 
 function Home() {
@@ -381,6 +382,8 @@ function Home() {
       </main>
 
       <Footer />
+      
+      <MobileConsultButton />
       
       {selectedVideo && (
         <VideoPlayer

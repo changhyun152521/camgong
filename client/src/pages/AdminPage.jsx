@@ -88,7 +88,7 @@ const AdminPage = () => {
             영상 관리
           </button>
         </div>
-        </div>
+      </div>
       </div>
       <Footer />
     </div>

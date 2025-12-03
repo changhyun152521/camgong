@@ -1,0 +1,91 @@
+.mobile-consult-button {
+  display: none; /* 기본적으로 숨김 */
+}
+
+/* 모바일에서만 표시 */
+@media (max-width: 768px) {
+  .mobile-consult-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #2c5f4f 0%, #1a3d2e 100%);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 
+      0 8px 24px rgba(44, 95, 79, 0.4),
+      0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    font-size: 15px;
+    min-width: 200px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .mobile-consult-button:active {
+    transform: translateX(-50%) scale(0.95);
+    box-shadow: 
+      0 4px 12px rgba(44, 95, 79, 0.3),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-consult-button:hover {
+    background: linear-gradient(135deg, #1a3d2e 0%, #2c5f4f 100%);
+    box-shadow: 
+      0 12px 32px rgba(44, 95, 79, 0.5),
+      0 6px 16px rgba(0, 0, 0, 0.25);
+    transform: translateX(-50%) translateY(-2px);
+  }
+
+  .phone-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    animation: phonePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes phonePulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  .button-text {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+}
+
+/* 작은 모바일 화면 */
+@media (max-width: 480px) {
+  .mobile-consult-button {
+    bottom: 16px;
+    padding: 12px 20px;
+    font-size: 14px;
+    min-width: 180px;
+    gap: 6px;
+  }
+
+  .phone-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .button-text {
+    font-size: 14px;
+  }
+}
+
