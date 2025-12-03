@@ -260,6 +260,55 @@ export const updateInquiryStatus = async (req, res) => {
   }
 };
 
+// 문의사항 답변 삭제 (관리자만)
+export const deleteInquiryAnswer = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.user?.id;
+
+    // 관리자 권한 확인
+    if (!req.user || req.user.userType !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: '관리자만 답변을 삭제할 수 있습니다'
+      });
+    }
+
+    const inquiry = await Inquiry.findById(req.params.id);
+    if (!inquiry) {
+      return res.status(404).json({
+        success: false,
+        error: '문의사항을 찾을 수 없습니다'
+      });
+    }
+
+    // 답변 삭제
+    inquiry.answer = null;
+    inquiry.status = '답변대기';
+    inquiry.answeredAt = null;
+    inquiry.answeredBy = null;
+
+    const updatedInquiry = await inquiry.save();
+
+    res.json({
+      success: true,
+      message: '답변이 삭제되었습니다',
+      data: updatedInquiry
+    });
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        error: '유효하지 않은 문의사항 ID입니다'
+      });
+    }
+    res.status(500).json({
+      success: false,
+      error: '답변을 삭제하는 중 오류가 발생했습니다',
+      message: error.message
+    });
+  }
+};
+
 // 문의사항 삭제 (작성자 또는 관리자만)
 export const deleteInquiry = async (req, res) => {
   try {

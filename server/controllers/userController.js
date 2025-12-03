@@ -5,15 +5,31 @@ import mongoose from 'mongoose';
 
 // ==================== 유저 조회 기능 ====================
 
-// 모든 유저 조회
+// 모든 유저 조회 (페이지네이션 지원, 최신순 정렬)
 export const getAllUsers = async (req, res) => {
   try {
-    // 데이터베이스에서 모든 유저 조회 (비밀번호 제외)
-    const users = await User.find().select('-password');
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // 전체 유저 수 조회
+    const totalUsers = await User.countDocuments();
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    // 데이터베이스에서 유저 조회 (비밀번호 제외, 최신순 정렬, 페이지네이션)
+    const users = await User.find()
+      .select('-password')
+      .sort({ createdAt: -1 }) // 최신순 정렬 (생성일 기준 내림차순)
+      .skip(skip)
+      .limit(limit)
+      .lean();
     
     res.status(200).json({
       success: true,
       count: users.length,
+      totalCount: totalUsers,
+      totalPages: totalPages,
+      currentPage: page,
       data: users
     });
   } catch (error) {
@@ -88,10 +104,10 @@ export const createUser = async (req, res) => {
     const { userId, password, name, phoneNumber, userType } = req.body;
     
     // 필수 필드 검증 (비즈니스 로직)
-    if (!userId || !password || !name || !phoneNumber) {
+    if (!userId || !password || !name) {
       return res.status(400).json({
         success: false,
-        message: '필수 필드가 누락되었습니다. (userId, password, name, phoneNumber)'
+        message: '필수 필드가 누락되었습니다. (userId, password, name)'
       });
     }
     
@@ -113,7 +129,7 @@ export const createUser = async (req, res) => {
       userId,
       password: hashedPassword,
       name,
-      phoneNumber,
+      phoneNumber: phoneNumber || '', // 선택 항목이므로 빈 문자열로 처리
       userType: userType || 'customer'
     });
     

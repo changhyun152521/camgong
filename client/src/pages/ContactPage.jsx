@@ -15,6 +15,7 @@ const ContactPage = () => {
   const [user, setUser] = useState(null);
   const [answerText, setAnswerText] = useState('');
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
+  const [isEditingAnswer, setIsEditingAnswer] = useState(false);
   const inquiriesPerPage = 8;
 
   const [formData, setFormData] = useState({
@@ -275,8 +276,9 @@ const ContactPage = () => {
       });
       
       if (response.data.success) {
-        alert('답변이 등록되었습니다.');
+        alert(isEditingAnswer ? '답변이 수정되었습니다.' : '답변이 등록되었습니다.');
         setAnswerText('');
+        setIsEditingAnswer(false);
         // 상세 정보 다시 불러오기
         const detailResponse = await api.get(`/inquiries/${selectedInquiry._id}`);
         if (detailResponse.data.success) {
@@ -291,6 +293,46 @@ const ContactPage = () => {
       alert(errorMessage);
     } finally {
       setIsSubmittingAnswer(false);
+    }
+  };
+
+  const handleEditAnswer = () => {
+    if (selectedInquiry?.answer) {
+      setAnswerText(selectedInquiry.answer);
+      setIsEditingAnswer(true);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setAnswerText('');
+    setIsEditingAnswer(false);
+  };
+
+  const handleDeleteAnswer = async () => {
+    if (!selectedInquiry) return;
+    
+    if (!window.confirm('정말로 이 답변을 삭제하시겠습니까?')) {
+      return;
+    }
+
+    try {
+      const response = await api.delete(`/inquiries/${selectedInquiry._id}/answer`);
+      if (response.data.success) {
+        alert('답변이 삭제되었습니다.');
+        setAnswerText('');
+        setIsEditingAnswer(false);
+        // 상세 정보 다시 불러오기
+        const detailResponse = await api.get(`/inquiries/${selectedInquiry._id}`);
+        if (detailResponse.data.success) {
+          setSelectedInquiry(detailResponse.data.data);
+        }
+        // 목록도 새로고침
+        loadInquiries();
+      }
+    } catch (error) {
+      console.error('답변 삭제 오류:', error);
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || '답변 삭제 중 오류가 발생했습니다.';
+      alert(errorMessage);
     }
   };
 
@@ -547,56 +589,95 @@ const ContactPage = () => {
                   </div>
 
                   {/* 답변 섹션 */}
-                  {selectedInquiry.answer ? (
+                  {selectedInquiry.answer && !isEditingAnswer ? (
                     <div className="contact-detail-answer">
                       <div className="answer-header">
                         <h3 className="answer-title">답변</h3>
-                        <div className="answer-info">
-                          <span className="answer-author">
-                            {selectedInquiry.answeredBy?.name || selectedInquiry.answeredBy?.userId || '관리자'}
-                          </span>
-                          {selectedInquiry.answeredAt && (
-                            <span className="answer-date">
-                              {new Date(selectedInquiry.answeredAt).toLocaleDateString('ko-KR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </span>
+                        <div className="answer-header-actions">
+                          {user?.userType === 'admin' && (
+                            <>
+                              <button 
+                                className="answer-edit-btn"
+                                onClick={handleEditAnswer}
+                                title="답변 수정"
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                수정
+                              </button>
+                              <button 
+                                className="answer-delete-btn"
+                                onClick={handleDeleteAnswer}
+                                title="답변 삭제"
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                                삭제
+                              </button>
+                            </>
                           )}
                         </div>
+                      </div>
+                      <div className="answer-info">
+                        <span className="answer-author">
+                          {selectedInquiry.answeredBy?.name || selectedInquiry.answeredBy?.userId || '관리자'}
+                        </span>
+                        {selectedInquiry.answeredAt && (
+                          <span className="answer-date">
+                            {new Date(selectedInquiry.answeredAt).toLocaleDateString('ko-KR', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        )}
                       </div>
                       <div className="answer-content">
                         {selectedInquiry.answer}
                       </div>
                     </div>
-                  ) : (
-                    user?.userType === 'admin' && (
-                      <div className="contact-detail-answer-form">
-                        <h3 className="answer-form-title">답변 작성</h3>
-                        <form onSubmit={handleAnswerSubmit}>
-                          <textarea
-                            className="answer-textarea"
-                            value={answerText}
-                            onChange={(e) => setAnswerText(e.target.value)}
-                            placeholder="답변 내용을 입력해주세요"
-                            rows="6"
-                          ></textarea>
-                          <div className="answer-form-actions">
+                  ) : user?.userType === 'admin' ? (
+                    <div className="contact-detail-answer-form">
+                      <h3 className="answer-form-title">
+                        {isEditingAnswer ? '답변 수정' : '답변 작성'}
+                      </h3>
+                      <form onSubmit={handleAnswerSubmit}>
+                        <textarea
+                          className="answer-textarea"
+                          value={answerText}
+                          onChange={(e) => setAnswerText(e.target.value)}
+                          placeholder="답변 내용을 입력해주세요"
+                          rows="6"
+                        ></textarea>
+                        <div className="answer-form-actions">
+                          {isEditingAnswer && (
                             <button 
-                              type="submit" 
-                              className="btn-answer-submit"
-                              disabled={isSubmittingAnswer || !answerText.trim()}
+                              type="button"
+                              className="btn-answer-cancel"
+                              onClick={handleCancelEdit}
+                              disabled={isSubmittingAnswer}
                             >
-                              {isSubmittingAnswer ? '등록 중...' : '답변 등록'}
+                              취소
                             </button>
-                          </div>
-                        </form>
-                      </div>
-                    )
-                  )}
+                          )}
+                          <button 
+                            type="submit" 
+                            className="btn-answer-submit"
+                            disabled={isSubmittingAnswer || !answerText.trim()}
+                          >
+                            {isSubmittingAnswer ? (isEditingAnswer ? '수정 중...' : '등록 중...') : (isEditingAnswer ? '수정 완료' : '답변 등록')}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             )}

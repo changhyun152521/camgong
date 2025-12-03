@@ -61,8 +61,14 @@ const SignupModal = ({ isOpen, onClose }) => {
       newErrors.name = '이름을 입력해주세요.';
     }
 
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = '전화번호를 입력해주세요.';
+    // 전화번호는 선택 항목이므로 필수 검증 제거
+    // 전화번호 형식 검증 (입력한 경우에만)
+    if (formData.phoneNumber.trim()) {
+      const phoneRegex = /^010-?\d{4}-?\d{4}$/;
+      const normalizedPhone = formData.phoneNumber.replace(/[-\s]/g, '');
+      if (!phoneRegex.test(normalizedPhone)) {
+        newErrors.phoneNumber = '올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)';
+      }
     }
 
     setErrors(newErrors);
@@ -80,7 +86,11 @@ const SignupModal = ({ isOpen, onClose }) => {
 
     try {
       // confirmPassword는 서버로 보내지 않음
+      // 전화번호가 비어있으면 빈 문자열로 전송
       const { confirmPassword, ...userData } = formData;
+      if (!userData.phoneNumber || !userData.phoneNumber.trim()) {
+        userData.phoneNumber = '';
+      }
       const response = await api.post('/users', userData);
       
       if (response.data.success) {
@@ -207,12 +217,29 @@ const SignupModal = ({ isOpen, onClose }) => {
                 id="phoneNumber"
                 name="phoneNumber"
                 className={`signup-info-input ${errors.phoneNumber ? 'error' : ''}`}
-                placeholder="전화번호 •"
+                placeholder="전화번호 (선택)"
                 value={formData.phoneNumber}
                 onChange={handleChange}
               />
               {errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
+              <p className="signup-phone-hint">
+                전화번호는 선택 항목입니다. 제공하지 않아도 서비스 이용이 가능하며, 
+                비밀번호 재설정 등 일부 기능은 제한될 수 있습니다.
+              </p>
             </div>
+          </div>
+
+          {/* 개인정보 처리방침 안내 */}
+          <div className="signup-privacy-notice">
+            <p className="signup-privacy-text">
+              회원가입 시 <span className="signup-privacy-link">개인정보 처리방침</span>에 동의하는 것으로 간주됩니다.
+            </p>
+            <p className="signup-privacy-detail">
+              • 수집 항목: 아이디, 비밀번호, 이름, 전화번호(선택)<br/>
+              • 수집 목적: 서비스 제공, 회원 관리, 문의사항 답변<br/>
+              • 보관 기간: 회원 탈퇴 시까지<br/>
+              • 전화번호는 선택 항목이며, 제공하지 않아도 서비스 이용이 가능합니다.
+            </p>
           </div>
 
           <button 

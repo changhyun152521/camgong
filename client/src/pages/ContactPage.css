@@ -750,6 +750,12 @@
   overflow: hidden;
 }
 
+.answer-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .answer-header::before {
   content: '';
   position: absolute;
@@ -785,9 +791,11 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  align-items: flex-end;
+  align-items: flex-start;
   position: relative;
   z-index: 1;
+  margin-top: 16px;
+  padding: 0 24px;
 }
 
 .answer-author {
@@ -854,6 +862,7 @@
 .answer-form-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
   margin-top: 16px;
 }
 
@@ -879,6 +888,70 @@
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+/* 답변 수정/삭제 버튼 */
+.answer-edit-btn,
+.answer-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  color: #666;
+}
+
+.answer-edit-btn {
+  color: #0066cc;
+}
+
+.answer-edit-btn:hover {
+  color: #0052a3;
+  background: rgba(0, 102, 204, 0.05);
+}
+
+.answer-delete-btn {
+  color: #dc3545;
+}
+
+.answer-delete-btn:hover {
+  color: #c82333;
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.answer-edit-btn svg,
+.answer-delete-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-answer-cancel {
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  color: #666;
+}
+
+.btn-answer-cancel:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #ccc;
+  color: #333;
+}
+
+.btn-answer-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* 반응형 */

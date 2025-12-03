@@ -8,6 +8,9 @@ import api from '../utils/api';
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [editingUser, setEditingUser] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -18,10 +21,17 @@ const UserManagement = () => {
     userType: 'customer'
   });
   const navigate = useNavigate();
+  const usersPerPage = 10; // 한 페이지에 10명씩 표시
 
   useEffect(() => {
     checkAdminAndLoadUsers();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      loadUsers();
+    }
+  }, [currentPage]);
 
   const checkAdminAndLoadUsers = async () => {
     try {
@@ -56,12 +66,14 @@ const UserManagement = () => {
   const loadUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get('/users/admin/all', {
+      const response = await api.get(`/users/admin/all?page=${currentPage}&limit=${usersPerPage}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       if (response.data.success) {
         setUsers(response.data.data);
+        setTotalPages(response.data.totalPages || 1);
+        setTotalCount(response.data.totalCount || 0);
       }
     } catch (error) {
       console.error('유저 목록 로드 오류:', error);
@@ -95,6 +107,7 @@ const UserManagement = () => {
           phoneNumber: '',
           userType: 'customer'
         });
+        setCurrentPage(1); // 새 유저 추가 시 첫 페이지로 이동
         loadUsers();
       }
     } catch (error) {
@@ -192,9 +205,13 @@ const UserManagement = () => {
         </div>
 
         <div className="user-table-wrapper">
+          <div className="user-count-info">
+            전체 {totalCount}명의 유저
+          </div>
           <table className="user-table">
             <thead>
               <tr>
+                <th>번호</th>
                 <th>아이디</th>
                 <th>이름</th>
                 <th>전화번호</th>
@@ -206,14 +223,15 @@ const UserManagement = () => {
             <tbody>
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="no-users">등록된 유저가 없습니다.</td>
+                  <td colSpan="7" className="no-users">등록된 유저가 없습니다.</td>
                 </tr>
               ) : (
-                users.map(user => (
+                users.map((user, index) => (
                   <tr key={user._id}>
+                    <td>{(currentPage - 1) * usersPerPage + index + 1}</td>
                     <td>{user.userId}</td>
                     <td>{user.name}</td>
-                    <td>{user.phoneNumber}</td>
+                    <td>{user.phoneNumber || '-'}</td>
                     <td>
                       <span className={`user-type-badge ${user.userType}`}>
                         {user.userType === 'admin' ? '관리자' : '고객'}
@@ -242,6 +260,35 @@ const UserManagement = () => {
             </tbody>
           </table>
         </div>
+
+        {/* 페이지네이션 */}
+        {totalPages > 1 && (
+          <div className="user-pagination">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="pagination-button"
+            >
+              이전
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="pagination-button"
+            >
+              다음
+            </button>
+          </div>
+        )}
 
         <button 
           className="back-button"

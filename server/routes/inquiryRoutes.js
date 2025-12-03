@@ -5,6 +5,7 @@ import {
   createInquiry,
   updateInquiryAnswer,
   updateInquiryStatus,
+  deleteInquiryAnswer,
   deleteInquiry
 } from '../controllers/inquiryController.js';
 import { verifyToken, verifyAdmin } from '../middleware/auth.js';
@@ -26,6 +27,9 @@ router.put('/:id/answer', verifyToken, verifyAdmin, updateInquiryAnswer);
 
 // 문의사항 상태 변경 (관리자만)
 router.patch('/:id/status', verifyToken, verifyAdmin, updateInquiryStatus);
+
+// 문의사항 답변 삭제 (관리자만)
+router.delete('/:id/answer', verifyToken, verifyAdmin, deleteInquiryAnswer);
 
 // 문의사항 삭제 (작성자 또는 관리자만)
 router.delete('/:id', verifyToken, deleteInquiry);

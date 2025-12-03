@@ -339,36 +339,36 @@ function Home() {
                   
                   return (
                     <div 
-                      key={video._id}
-                      className="video-card-link"
+                    key={video._id}
+                    className="video-card-link"
                       onClick={() => {
                         if (videoId) {
                           setSelectedVideo({ videoId, title: video.title });
                         }
                       }}
                       style={{ cursor: 'pointer' }}
-                    >
-                      <div className="video-card">
-                        <div className="video-thumbnail">
-                          <img 
-                            src={video.thumbnailUrl} 
-                            alt={video.title}
-                            className="video-thumbnail-image"
-                            onError={(e) => {
-                              // 썸네일 로드 실패 시 대체 썸네일 사용
-                              if (videoId) {
-                                e.target.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-                              }
-                            }}
-                          />
-                          <div className="video-play-overlay">
-                            <svg className="video-play-icon" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M8 5v14l11-7z"></path>
-                            </svg>
-                          </div>
+                  >
+                    <div className="video-card">
+                      <div className="video-thumbnail">
+                        <img 
+                          src={video.thumbnailUrl} 
+                          alt={video.title}
+                          className="video-thumbnail-image"
+                          onError={(e) => {
+                            // 썸네일 로드 실패 시 대체 썸네일 사용
+                            if (videoId) {
+                              e.target.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                            }
+                          }}
+                        />
+                        <div className="video-play-overlay">
+                          <svg className="video-play-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z"></path>
+                          </svg>
                         </div>
-                        <h3 className="video-card-title">{video.title}</h3>
                       </div>
+                      <h3 className="video-card-title">{video.title}</h3>
+                    </div>
                     </div>
                   );
                 })
