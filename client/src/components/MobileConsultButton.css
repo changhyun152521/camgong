@@ -10,7 +10,7 @@
     justify-content: center;
     gap: 8px;
     position: fixed;
-    bottom: 60px;
+    bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
     background: linear-gradient(135deg, #2c5f4f 0%, #1a3d2e 100%);
@@ -72,7 +72,7 @@
 /* 작은 모바일 화면 */
 @media (max-width: 480px) {
   .mobile-consult-button {
-    bottom: 50px;
+    bottom: 35px;
     padding: 12px 20px;
     font-size: 14px;
     min-width: 180px;
