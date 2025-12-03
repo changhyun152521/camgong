@@ -1,7 +1,46 @@
+import { useState, useEffect } from 'react';
 import './MobileConsultButton.css';
 
 const MobileConsultButton = () => {
   const phoneNumber = '070-4408-5500';
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const footer = document.querySelector('.main-footer');
+      if (footer) {
+        const footerRect = footer.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        // Footer의 상단이 화면 하단에 도달하거나 그 위에 있으면 버튼 숨김
+        // 약간의 여유를 두기 위해 100px 여유 공간 추가
+        const isFooterNearBottom = footerRect.top <= windowHeight - 100;
+        setIsVisible(!isFooterNearBottom);
+      }
+    };
+
+    // 초기 체크
+    handleScroll();
+
+    // 스크롤 이벤트 리스너 추가 (디바운싱)
+    let timeoutId;
+    const debouncedHandleScroll = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(handleScroll, 50);
+    };
+
+    window.addEventListener('scroll', debouncedHandleScroll, { passive: true });
+    window.addEventListener('resize', debouncedHandleScroll);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('scroll', debouncedHandleScroll);
+      window.removeEventListener('resize', debouncedHandleScroll);
+    };
+  }, []);
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <a 
